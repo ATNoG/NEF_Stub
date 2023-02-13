@@ -1,7 +1,7 @@
 #!/bin/bash
 
-PORT=8888
-URL=http://localhost
+PORT=30001
+URL=http://10.0.12.129
 
 set -a # automatically export all variables
 source .env

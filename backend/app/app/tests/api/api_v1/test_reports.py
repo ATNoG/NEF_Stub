@@ -270,7 +270,7 @@ def get_qos_subscription_by_id(base_url, key, netApp_id, sub_id):
 
 if __name__ == "__main__":
 
-    base_url = "http://10.0.12.95:8888"
+    base_url = "http://10.0.12.129:30001"
 
     url = base_url + "/api/v1/login/access-token"
 
