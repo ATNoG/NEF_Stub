@@ -10,6 +10,8 @@ from app.api import deps
 from app.crud import crud_mongo, user, ue
 from app.db.session import client
 from .utils import add_notifications
+import requests
+import json
 
 router = APIRouter()
 db_collection= 'BdtManagement'
@@ -21,8 +23,10 @@ def read_active_subscriptions(
     current_user: models.User = Depends(deps.get_current_active_user),
     http_request: Request
 ) -> Any:
+    x = requests.post("http://10.0.12.168:8000/report/")
     endpoint = http_request.scope['route'].path 
-    tools.reports.update_report(scsAsId, endpoint, "GET")
+    data = {"user": current_user ,"scsAsId": scsAsId, "endpoint": endpoint, "method": "GET", "payload": ""}
+    x = requests.put("http://10.0.12.168:8000/report/", data=json.dumps(data))
     pass
 
 
@@ -45,7 +49,8 @@ def create_subscription(
 ) -> Any:
     endpoint = http_request.scope['route'].path 
     json_item = jsonable_encoder(item_in)
-    tools.reports.update_report(scsAsId, endpoint, "POST", json_item)
+    data = {"user": current_user ,"scsAsId": scsAsId, "endpoint": endpoint, "method": "POST", "payload": json_item}
+    x = requests.put("http://10.0.12.168:8000/report/", data=json.dumps(data))
     pass
 
 @router.put("/{scsAsId}/subscriptions/{subscriptionId}")
@@ -56,33 +61,34 @@ def update_subscription(
     item_in: schemas.MonitoringEventSubscriptionCreate,
     current_user: models.User = Depends(deps.get_current_active_user),
     http_request: Request
-) -> Any:
+) -> Any:    
     endpoint = http_request.scope['route'].path 
     json_item = jsonable_encoder(item_in)
-    tools.reports.update_report(scsAsId, endpoint, "PUT", json_item, subscriptionId)
+    data = {"user": current_user ,"scsAsId": scsAsId, "endpoint": endpoint, "method": "PUT", "subscriptionId": subscriptionId,"payload": json_item}
+    x = requests.put("http://10.0.12.168:8000/report/", data=json.dumps(data))
     pass
 
-@router.get("/{scsAsId}/subscriptions/{subscriptionId}")
-def read_subscription(
-    *,
-    scsAsId: str = Path(..., title="The ID of the Netapp that creates a subscription", example="myNetapp"),
-    subscriptionId: str = Path(..., title="Identifier of the subscription resource"),
-    current_user: models.User = Depends(deps.get_current_active_user),
-    http_request: Request
-) -> Any:
-    endpoint = http_request.scope['route'].path 
-    tools.reports.update_report(scsAsId, endpoint, "GET", subs_id=subscriptionId)
-    pass
+# @router.get("/{scsAsId}/subscriptions/{subscriptionId}")
+# def read_subscription(
+#     *,
+#     scsAsId: str = Path(..., title="The ID of the Netapp that creates a subscription", example="myNetapp"),
+#     subscriptionId: str = Path(..., title="Identifier of the subscription resource"),
+#     current_user: models.User = Depends(deps.get_current_active_user),
+#     http_request: Request
+# ) -> Any:
+#     endpoint = http_request.scope['route'].path 
+#     tools.reports.update_report(scsAsId, endpoint, "GET", subs_id=subscriptionId)
+#     pass
 
 
-@router.delete("/{scsAsId}/subscriptions/{subscriptionId}")
-def delete_subscription(
-    *,
-    scsAsId: str = Path(..., title="The ID of the Netapp that creates a subscription", example="myNetapp"),
-    subscriptionId: str = Path(..., title="Identifier of the subscription resource"),
-    current_user: models.User = Depends(deps.get_current_active_user),
-    http_request: Request
-) -> Any:
-    endpoint = http_request.scope['route'].path 
-    tools.reports.update_report(scsAsId, endpoint, "DELETE", subs_id=subscriptionId)
-    pass
+# @router.delete("/{scsAsId}/subscriptions/{subscriptionId}")
+# def delete_subscription(
+#     *,
+#     scsAsId: str = Path(..., title="The ID of the Netapp that creates a subscription", example="myNetapp"),
+#     subscriptionId: str = Path(..., title="Identifier of the subscription resource"),
+#     current_user: models.User = Depends(deps.get_current_active_user),
+#     http_request: Request
+# ) -> Any:
+#     endpoint = http_request.scope['route'].path 
+#     tools.reports.update_report(scsAsId, endpoint, "DELETE", subs_id=subscriptionId)
+#     pass
