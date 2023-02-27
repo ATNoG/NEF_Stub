@@ -3,6 +3,8 @@ from starlette.middleware.cors import CORSMiddleware
 from app.api.api_v1.api import api_router, nef_router
 from app.core.config import settings
 import time
+from fastapi.exceptions import RequestValidationError
+from http import HTTPStatus
 
 # imports for UI
 from fastapi.staticfiles import StaticFiles
@@ -41,6 +43,29 @@ async def add_process_time_header(request: Request, call_next):
     process_time = time.time() - start_time
     response.headers["X-Process-Time"] = str(process_time)
     return response
+
+# This function will handle all default pydantic exceptions raised in the
+# routers and parse them to TMF632 standardized exceptions
+@nefapi.exception_handler(RequestValidationError)
+async def validation_exception_handler(request, exc):
+
+    error_messages = [
+        f"Error=(payload_location={'/'.join(error['loc'])}, " +
+        f"message='{error['msg']}')"
+        for error
+        in exc.errors()
+    ]
+
+    print("Exception Occurred in Payload's Validation: " +
+                 ", ".join(error_messages))
+
+    # return RouterAux.create_http_response(
+    #         http_status=HTTPStatus.BAD_REQUEST,
+    #         content=RouterAux.compose_error_payload(
+    #             code=HTTPStatus.BAD_REQUEST,
+    #             reason=", ".join(error_messages),
+    #         )
+    #     )
 
 # ================================= Static Page routes =================================
 

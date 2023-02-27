@@ -22,6 +22,10 @@ EMAILS_FROM_EMAIL=user@my-email.com
 SENTRY_DSN=
 USERS_OPEN_REGISTRATION=true
 
+# Report API
+REPORT_API_HOST=10.0.12.168
+REPORT_API_PORT=8000
+
 # Postgres
 # info: POSTGRES_USER value ('postgres') is hard-coded in /pgadmin/servers.json
 POSTGRES_SERVER=db

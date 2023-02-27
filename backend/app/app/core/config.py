@@ -87,6 +87,9 @@ class Settings(BaseSettings):
     FIRST_SUPERUSER_PASSWORD: str
     USERS_OPEN_REGISTRATION: bool = False
 
+    REPORT_API_HOST: Optional[str] = None
+    REPORT_API_PORT: Optional[int] = None
+
     class Config:
         case_sensitive = True
 
