@@ -9,7 +9,6 @@ from jose import jwt
 
 from app.core.config import settings
 
-
 def send_email(
     email_to: str,
     subject_template: str = "",

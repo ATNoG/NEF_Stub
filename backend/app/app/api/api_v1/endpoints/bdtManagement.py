@@ -13,6 +13,7 @@ from .utils import add_notifications
 import requests
 import json
 from app.core.config import settings
+from app.tools import compose_report_payload
 
 router = APIRouter()
 db_collection= 'BdtManagement'
@@ -46,14 +47,12 @@ def create_subscription(
     current_user: models.User = Depends(deps.get_current_active_user),
     http_request: Request
 ) -> Any:
-    endpoint = http_request.scope['route'].path 
+    endpoint = http_request.url.path
     json_item = jsonable_encoder(item_in)
-    user_item = jsonable_encoder(current_user)
-    body = {"user": user_item ,"scsAsId": scsAsId, "endpoint": endpoint, "method": "POST", "payload": json_item}
-    print(body)
-    data2=json.dumps(body)
-    print(data2)
-    x = requests.put("http://10.0.12.168:8000/report/", data=data2)
+    # response = {"ok": "ok"}
+    # body = compose_report_payload(endpoint, http_request.method, scsAsId, json_item, response)
+    # # body = {"details": {"endpoint": endpoint, "method": http_request.method, "scsAsId": scsAsId, "payload": json_item}, "response": {}}
+    # requests.put("http://10.0.12.168:8000/report/", data=json.dumps(body))
     pass
 
 @router.put("/{scsAsId}/subscriptions/{subscriptionId}")

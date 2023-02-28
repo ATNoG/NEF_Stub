@@ -12,6 +12,10 @@ from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
 from fastapi.responses import RedirectResponse
 
+from app.tools import create_http_response, compose_error_payload, compose_report_payload
+import requests
+import json
+
 # ================================= Main Application - NEF Emulator =================================
 app = FastAPI(title=settings.PROJECT_NAME,
               openapi_url=f"{settings.API_V1_STR}/openapi.json")
@@ -56,16 +60,29 @@ async def validation_exception_handler(request, exc):
         in exc.errors()
     ]
 
-    print("Exception Occurred in Payload's Validation: " +
-                 ", ".join(error_messages))
+    # print("Exception Occurred in Payload's Validation: " +
+    #              ", ".join(error_messages))
 
-    # return RouterAux.create_http_response(
-    #         http_status=HTTPStatus.BAD_REQUEST,
-    #         content=RouterAux.compose_error_payload(
-    #             code=HTTPStatus.BAD_REQUEST,
-    #             reason=", ".join(error_messages),
-    #         )
-    #     )
+    error_payload = compose_error_payload(code=HTTPStatus.BAD_REQUEST,
+                                          reason=", ".join(error_messages))
+    
+    response_payload = compose_report_payload(request.url.path,
+                                              request.method,
+                                              request.query_params['scsAsId'],
+                                              exc.body,
+                                              error_payload)
+    print(error_payload)
+    print(response_payload)
+
+    requests.put("http://10.0.12.168:8000/report/", data=json.dumps(response_payload))
+
+    return create_http_response(
+            http_status=HTTPStatus.BAD_REQUEST,
+            content=compose_error_payload(
+                code=HTTPStatus.BAD_REQUEST,
+                reason=", ".join(error_messages),
+            )
+        )
 
 # ================================= Static Page routes =================================
 

@@ -1,43 +1,52 @@
-import json
-import os
+from http import HTTPStatus
+from fastapi.responses import JSONResponse
+from typing import Any, Dict
 
-def create_report():
-    if not os.path.exists('report.json'):
-        with open('report.json', 'x') as jsonFile:
-            data = {}
-            data["requests"] = []
-            json.dump(data, jsonFile)
-    pass
+def create_http_response(http_status: HTTPStatus = HTTPStatus.OK,
+                         content: Any = {}):
+    return JSONResponse(
+        status_code=http_status.value,
+        content=content,
+        # headers={"Access-Control-Allow-Origin": "*"}
+        )
 
-def get_report_path():
-    return os.path.abspath('report.json')
+def compose_error_payload(code: str, reason: str, message: str = None,
+                          status: str = None, reference_error: str = None,
+                          base_type: str = None, schema_location: str = None,
+                          type: str = None):
 
-def update_report(scsAsId, endpoint, method, json_item=None, subs_id=-1,set_id=-1,trans_id=-1,conf_id=-1,provs_id=-1):
-    with open("report.json", "r") as jsonFile:
-            data = json.load(jsonFile)
-            request_count = len(data["requests"])
-            json_data = {}
-            json_data.update({"id" : request_count, "scsAsId" : scsAsId, "endpoint" : endpoint, "method" : method})
-            if subs_id != -1:
-                json_data.update({"subscriptionId" : subs_id})
-            if set_id != -1:
-                json_data.update({"setId" : set_id})
-            if set_id != -1:
-                json_data.update({"transactionId" : trans_id})
-            if set_id != -1:
-                json_data.update({"configurationId" : conf_id})
-            if set_id != -1:
-                json_data.update({"provisioningId" : provs_id})
-            if json_item != None:
-                json_data.update(json_item)
-            
-            data["requests"].append(json_data)
+    payload = {
+        "code": code,
+        "reason": reason,
+    }
 
-    with open("report.json", "w") as jsonFile:
-        json.dump(data, jsonFile)
-    pass
+    if message:
+        payload["message"] = message
+    if status:
+        payload["status"] = message
+    if reference_error:
+        payload["referenceError"] = message
+    if message:
+        payload["message"] = message
+    if base_type:
+        payload["@baseType"] = message
+    if schema_location:
+        payload["@schemaLocation"] = message
+    if type:
+        payload["@type"] = message
 
-def delete_report():
-    if os.path.exists('report.json'):
-        os.remove('report.json')
-    pass
+    return payload
+
+def compose_report_payload(endpoint: str, method: str, scsAsId: str,
+                           payload: str, response: Dict):
+
+    report = {
+        "details": {
+            "endpoint": endpoint,
+            "method": method,
+            "scsAsId": scsAsId,
+            "payload": payload
+        },
+        "response": response
+    }
+    return report
