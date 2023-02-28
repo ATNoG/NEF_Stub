@@ -71,11 +71,11 @@ async def validation_exception_handler(request, exc):
                                               request.query_params['scsAsId'],
                                               exc.body,
                                               error_payload)
-    print(error_payload)
-    print(response_payload)
 
-    requests.put("http://10.0.12.168:8000/report/", data=json.dumps(response_payload))
-
+    requests.put(f"http://{str(settings.REPORT_API_HOST)}:{str(settings.REPORT_API_PORT)}/report/", 
+                    data=json.dumps(response_payload), 
+                    params={"filename":str(settings.REPORT_API_FILENAME)})
+    
     return create_http_response(
             http_status=HTTPStatus.BAD_REQUEST,
             content=compose_error_payload(

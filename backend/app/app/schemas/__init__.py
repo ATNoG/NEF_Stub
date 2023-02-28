@@ -18,3 +18,4 @@ from .npConfiguration import NpConfiguration, NpConfigurationCreate, Configurati
 from .racsProvisioning import RacsProvisioningData, RacsProvisioningDataCreate
 from .niddConfigurationTrigger import NiddConfigurationTrigger, NiddConfigurationTriggerReply
 from .utils import scenario
+from .test_schema import Test

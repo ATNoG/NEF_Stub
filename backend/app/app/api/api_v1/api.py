@@ -30,3 +30,4 @@ nef_router.include_router(endpoints.cpParameterProvisioning.router, prefix="/3gp
 nef_router.include_router(endpoints.pfdManagement.router, prefix="/3gpp-pfd-management/v1", tags=["Packet Flow Description (PFD) Management API"])
 nef_router.include_router(endpoints.npConfiguration.router, prefix="/3gpp-network-parameter-configuration/v1", tags=["Network Parameter Configuration API"])
 nef_router.include_router(endpoints.racsProvisioning.router, prefix="/3gpp-racs-pp/v1", tags=["RACS (Radio Capability Signaling) Parameter Provisioning API"])
+nef_router.include_router(endpoints.test_endpoint.router, prefix="/3gpp-TESTAPI/v1", tags=["TEST API"])

@@ -20,7 +20,8 @@ def main() -> None:
     logger.info("Initial data created")
 
     logger.info("Creating Report")
-    requests.post(f"http://{str(settings.REPORT_API_HOST)}:{str(settings.REPORT_API_PORT)}/report/")
+    requests.post(f"http://{str(settings.REPORT_API_HOST)}:{str(settings.REPORT_API_PORT)}/report/", 
+                  params={"filename":str(settings.REPORT_API_FILENAME)})
     logger.info("Report Created")
 
 

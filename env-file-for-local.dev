@@ -25,6 +25,7 @@ USERS_OPEN_REGISTRATION=true
 # Report API
 REPORT_API_HOST=10.0.12.168
 REPORT_API_PORT=8000
+REPORT_API_FILENAME=test.json
 
 # Postgres
 # info: POSTGRES_USER value ('postgres') is hard-coded in /pgadmin/servers.json

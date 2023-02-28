@@ -89,6 +89,7 @@ class Settings(BaseSettings):
 
     REPORT_API_HOST: Optional[str] = None
     REPORT_API_PORT: Optional[int] = None
+    REPORT_API_FILENAME: Optional[str] = None
 
     class Config:
         case_sensitive = True

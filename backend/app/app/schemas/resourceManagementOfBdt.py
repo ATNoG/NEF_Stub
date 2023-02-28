@@ -52,7 +52,7 @@ class BdtCreate(BaseModel):
     """Represents a Background Data Transfer subscription."""
     #TODO: TS 29.571 Common Data
     #supportedFeatures: Optional[SupportedFeatures] = None
-    volumePerUE: UsageThreshold = None
+    volumePerUE: UsageThreshold
     numberOfUEs: int = Field(None, description="Identifies the number of UEs.", ge=1)
     desiredTimeWindow: TimeWindow = None
     #locationArea: Optional[LocationArea] = None

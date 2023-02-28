@@ -13,7 +13,7 @@ from .utils import add_notifications
 import requests
 import json
 from app.core.config import settings
-from app.tools import compose_report_payload
+from app.tools import compose_report_payload, compose_error_payload
 
 router = APIRouter()
 db_collection= 'BdtManagement'
@@ -49,10 +49,15 @@ def create_subscription(
 ) -> Any:
     endpoint = http_request.url.path
     json_item = jsonable_encoder(item_in)
-    # response = {"ok": "ok"}
-    # body = compose_report_payload(endpoint, http_request.method, scsAsId, json_item, response)
-    # # body = {"details": {"endpoint": endpoint, "method": http_request.method, "scsAsId": scsAsId, "payload": json_item}, "response": {}}
-    # requests.put("http://10.0.12.168:8000/report/", data=json.dumps(body))
+    #TODO: change to generic payload
+    content=compose_error_payload(
+                code=200,
+                reason="ok",
+            )
+    body = compose_report_payload(endpoint, http_request.method, scsAsId, json_item, content)
+    requests.put(f"http://{str(settings.REPORT_API_HOST)}:{str(settings.REPORT_API_PORT)}/report/", 
+                    data=json.dumps(body), 
+                    params={"filename":str(settings.REPORT_API_FILENAME)})
     pass
 
 @router.put("/{scsAsId}/subscriptions/{subscriptionId}")
