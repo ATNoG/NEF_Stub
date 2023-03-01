@@ -71,9 +71,14 @@ def update_subscription(
 ) -> Any:    
     endpoint = http_request.scope['route'].path 
     json_item = jsonable_encoder(item_in)
-    data = {"user": current_user ,"scsAsId": scsAsId, "endpoint": endpoint, "method": "PUT", "subscriptionId": subscriptionId,"payload": json_item}
-    x = requests.put("http://10.0.12.168:8000/report/", data=json.dumps(data))
-    pass
+    response=compose_error_payload(
+                code=200,
+                reason="ok",
+            )
+    body = compose_report_payload(endpoint, http_request.method, json_item, response,scsAsId=scsAsId,subscriptionId=subscriptionId)
+    requests.put(f"http://{str(settings.REPORT_API_HOST)}:{str(settings.REPORT_API_PORT)}/report/", 
+                    data=json.dumps(body), 
+                    params={"filename":str(settings.REPORT_API_FILENAME)})
 
 # @router.get("/{scsAsId}/subscriptions/{subscriptionId}")
 # def read_subscription(

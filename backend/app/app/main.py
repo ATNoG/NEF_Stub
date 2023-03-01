@@ -65,12 +65,45 @@ async def validation_exception_handler(request, exc):
 
     error_payload = compose_error_payload(code=HTTPStatus.BAD_REQUEST,
                                           reason=", ".join(error_messages))
-    
+
+    scsAsId = None
+    afId = None
+
+    if 'scsAsId' in request.query_params:
+        scsAsId = request.query_params['scsAsId']
+    elif 'afId' in request.query_params:
+        afId = request.query_params['afId']
+
+    subscriptionId = None
+    transactionId = None
+    configurationId = None
+    provisioningId = None
+
+    if 'subscriptionId' in request.query_params:
+        subscriptionId = request.query_params['subscriptionId']
+    elif 'transactionId' in request.query_params:
+        transactionId = request.query_params['transactionId']
+    elif 'configurationId' in request.query_params:
+        configurationId = request.query_params['configurationId']
+    elif 'provisioningId' in request.query_params:
+        provisioningId = request.query_params['provisioningId']
+
+    setId = None
+
+    if 'setId' in request.query_params:
+        setId = request.query_params['setId']
+
     response_payload = compose_report_payload(request.url.path,
                                               request.method,
-                                              request.query_params['scsAsId'],
                                               exc.body,
-                                              error_payload)
+                                              error_payload,
+                                              scsAsId,
+                                              afId,
+                                              subscriptionId,
+                                              transactionId,
+                                              configurationId,
+                                              provisioningId,
+                                              setId)
 
     requests.put(f"http://{str(settings.REPORT_API_HOST)}:{str(settings.REPORT_API_PORT)}/report/", 
                     data=json.dumps(response_payload), 

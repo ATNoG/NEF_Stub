@@ -1,15 +1,9 @@
 from typing import List, Optional
 from datetime import datetime
-from pydantic import BaseModel, Field, AnyHttpUrl, constr
+from pydantic import BaseModel, Field, AnyHttpUrl, constr, Extra
+from .commonData import UsageThreshold
 
 #Common Data Types
-
-class UsageThreshold(BaseModel):
-    """Represents a usage threshold."""
-    duration: int = Field(None, description="A period of time in units of seconds", ge=0)
-    totalVolume: int = Field(None, description="A volume in units of bytes", ge=0)
-    downlinkVolume: int = Field(None, description="A volume in units of bytes", ge=0)
-    uplinkVolume: int = Field(None, description="A volume in units of bytes", ge=0)
 
 class TimeWindow(BaseModel):
     """Represents a time window identified by a start time and a stop time."""
@@ -53,8 +47,8 @@ class BdtCreate(BaseModel):
     #TODO: TS 29.571 Common Data
     #supportedFeatures: Optional[SupportedFeatures] = None
     volumePerUE: UsageThreshold
-    numberOfUEs: int = Field(None, description="Identifies the number of UEs.", ge=1)
-    desiredTimeWindow: TimeWindow = None
+    numberOfUEs: int = Field(description="Identifies the number of UEs.", ge=1)
+    desiredTimeWindow: TimeWindow
     #locationArea: Optional[LocationArea] = None
     #locationArea5G: Optional[LocationArea5G] = None
     referenceId: Optional[str] = Field(None, description="string identifying a BDT Reference ID as defined in clause 5.3.3 of 3GPP TS 29.154.")
@@ -66,6 +60,9 @@ class BdtCreate(BaseModel):
     notificationDestination: Optional[AnyHttpUrl] = Field("http://localhost:80/api/v1/utils/bdt/callback", description="Reference resource (URL) identifying service consumer's endpoint, in order to receive the asynchronous notification. For testing use 'http://localhost:80/api/v1/utils/bdt/callback'") #Default value for development testing
     warnNotifEnabled: Optional[bool] = Field(None, description="Indicates whether the BDT warning notification is enabled (true) or not (false). Default value is false.")
     trafficDes: Optional[str] = Field(None, description="Identify a traffic descriptor as defined in Figure 5.2.2 of 3GPP TS 24.526, octets v+5 to w.")
+
+    class Config:
+        extra = Extra.forbid
 
 class Bdt(BdtCreate):
     """Represents a Background Data Transfer subscription."""

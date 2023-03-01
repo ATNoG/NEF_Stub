@@ -37,16 +37,36 @@ def compose_error_payload(code: str, reason: str, message: str = None,
 
     return payload
 
-def compose_report_payload(endpoint: str, method: str, scsAsId: str,
-                           payload: str, response: Dict):
+def compose_report_payload(endpoint: str, method: str, payload: str, 
+                           response: Dict, scsAsId: str = None,
+                           afId: str = None, subscriptionId: str = None,
+                           transactionId: str = None, configurationId: str = None,
+                           provisioningId: str = None, setId: str = None):
 
     report = {
         "details": {
             "endpoint": endpoint,
             "method": method,
-            "scsAsId": scsAsId,
-            "payload": payload
         },
         "response": response
     }
+
+    if scsAsId:
+        report["details"]["scsAsId"] = scsAsId
+    if afId:
+        report["details"]["afId"] = afId
+    if subscriptionId:
+        report["details"]["subscriptionId"] = subscriptionId
+    if transactionId:
+        report["details"]["transactionId"] = transactionId
+    if configurationId:
+        report["details"]["configurationId"] = configurationId
+    if provisioningId:
+        report["details"]["provisioningId"] = provisioningId
+    if setId:
+        report["details"]["setId"] = setId
+
+    report["details"]["payload"] = payload
+    
+
     return report
