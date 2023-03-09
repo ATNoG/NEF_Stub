@@ -1,7 +1,7 @@
 from datetime import timedelta
 from typing import Any
 
-from fastapi import APIRouter, Body, Depends, HTTPException
+from fastapi import APIRouter, Body, Depends, HTTPException, Request
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 
@@ -16,30 +16,68 @@ from app.utils import (
     verify_password_reset_token,
 )
 
+import requests
+import json
+from app.core.config import settings
+from app.tools import compose_report_payload, compose_error_payload
+
 router = APIRouter()
 
 
 @router.post("/login/access-token", response_model=schemas.Token)
 def login_access_token(
-    db: Session = Depends(deps.get_db), form_data: OAuth2PasswordRequestForm = Depends()
+    http_request: Request,
+    db: Session = Depends(deps.get_db), 
+    form_data: OAuth2PasswordRequestForm = Depends()
 ) -> Any:
     """
     OAuth2 compatible token login, get an access token for future requests
     """
+    endpoint = http_request.url.path
+
     user = crud.user.authenticate(
         db, email=form_data.username, password=form_data.password
     )
     if not user:
+        response=compose_error_payload(
+            code=400,
+            reason="Incorrect email or password",
+        )
+        body = compose_report_payload(endpoint, http_request.method, "", response)
+        requests.put(f"http://{str(settings.REPORT_API_HOST)}:{str(settings.REPORT_API_PORT)}/report/", 
+                    data=json.dumps(body), 
+                    params={"filename":str(settings.REPORT_API_FILENAME)})
         raise HTTPException(status_code=400, detail="Incorrect email or password")
     elif not crud.user.is_active(user):
+        response=compose_error_payload(
+            code=400,
+            reason="Inactive user",
+        )
+        body = compose_report_payload(endpoint, http_request.method, "", response)
+        requests.put(f"http://{str(settings.REPORT_API_HOST)}:{str(settings.REPORT_API_PORT)}/report/", 
+                    data=json.dumps(body), 
+                    params={"filename":str(settings.REPORT_API_FILENAME)})
         raise HTTPException(status_code=400, detail="Inactive user")
     access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
-    return {
+
+    token = {
         "access_token": security.create_access_token(
             user.id, expires_delta=access_token_expires
         ),
         "token_type": "bearer",
     }
+
+    payload = {
+        "code": 200,
+        "result": token
+    }
+            
+    body = compose_report_payload(endpoint, http_request.method, "", payload)
+    requests.put(f"http://{str(settings.REPORT_API_HOST)}:{str(settings.REPORT_API_PORT)}/report/", 
+                data=json.dumps(body), 
+                params={"filename":str(settings.REPORT_API_FILENAME)})
+
+    return token
 
 
 @router.post("/login/test-token", response_model=schemas.User)

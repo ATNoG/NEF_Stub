@@ -54,7 +54,7 @@ def create_subscription(
                 code=200,
                 reason="ok",
             )
-    body = compose_report_payload(endpoint, http_request.method, scsAsId, json_item, content)
+    body = compose_report_payload(endpoint, http_request.method, json_item, content, scsAsId)
     requests.put(f"http://{str(settings.REPORT_API_HOST)}:{str(settings.REPORT_API_PORT)}/report/", 
                     data=json.dumps(body), 
                     params={"filename":str(settings.REPORT_API_FILENAME)})

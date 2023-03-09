@@ -6,6 +6,10 @@ from pymongo.database import Database
 from app import models, schemas
 from app.api import deps
 from app import tools
+import requests
+import json
+from app.core.config import settings
+from app.tools import compose_report_payload, compose_error_payload
 
 router = APIRouter()
 db_collection= 'MonitoringEvent'
@@ -39,9 +43,17 @@ def create_subscription(
     current_user: models.User = Depends(deps.get_current_active_user),
     http_request: Request
 ) -> Any:
-    endpoint = http_request.scope['route'].path 
+    endpoint = http_request.url.path
     json_item = jsonable_encoder(item_in)
-    tools.reports.update_report(scsAsId, endpoint, "POST", json_item)
+    #TODO: change to generic payload
+    content=compose_error_payload(
+                code=200,
+                reason="ok",
+            )
+    body = compose_report_payload(endpoint, http_request.method, json_item, content, scsAsId)
+    requests.put(f"http://{str(settings.REPORT_API_HOST)}:{str(settings.REPORT_API_PORT)}/report/", 
+                    data=json.dumps(body), 
+                    params={"filename":str(settings.REPORT_API_FILENAME)})
     pass
 
 
