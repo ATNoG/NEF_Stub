@@ -2,9 +2,9 @@ from typing import Optional, List
 from datetime import datetime
 from pydantic import BaseModel, Field, IPvAnyAddress, AnyHttpUrl, constr
 from enum import Enum
-from .commonData import Snssai
+from .commonData import Snssai, ExtraBaseModel
 
-class ScheduledCommunicationTime(BaseModel):
+class ScheduledCommunicationTime(ExtraBaseModel):
     """Represents an offered scheduled communication time.""" 
     # daysOfWeek: List[DayOfWeek] = Field(None, description="Identifies the day(s) of the week. If absent, it indicates every day of the week.", min_items=1, max_items=6)
     # timeOfDayStart: TimeOfDay
@@ -17,7 +17,7 @@ class CpFailureCode(str, Enum):
     other = "OTHER_REASON"
     pass
 
-class CpReport(BaseModel):
+class CpReport(ExtraBaseModel):
     """ Represents a CP report indicating the CP set identifier(s) which CP parameter(s) 
     are not added or modified successfully and the corresponding failure cause(s). """ 
     setIds: List[str] = Field(None, description=" Identifies the CP set identifier(s) which CP parameter(s) are not added or modified successfully ", min_items=1)
@@ -25,7 +25,7 @@ class CpReport(BaseModel):
     pass
 
 #TODO: Heir from LocationArea5g
-class UmtLocationArea5G(BaseModel):
+class UmtLocationArea5G(ExtraBaseModel):
     """Represents the user location area describing the UE moving trajectory. """
     # umtTime: TimeOfDay
     # umtDuration: int = Field(None, description="A period of time in units of seconds", ge=0)
@@ -58,7 +58,7 @@ class TrafficProfile(str, Enum):
     dual_trans_dl_first = "DUAL_TRANS_DL_FIRST" 
     multi_trans = "MULTI_TRANS" 
 
-class CpParameterSetCreate(BaseModel):
+class CpParameterSetCreate(ExtraBaseModel):
     """Represents an offered communication pattern parameter set."""
     setId: str = Field(None, description=" SCS/AS-chosen correlator provided by the SCS/AS in the request to create a resource fo CP parameter set(s).")
     validityTime: Optional[datetime] = Field(None, description="Identifies when the CP parameter set expires and shall be deleted.")
@@ -80,7 +80,7 @@ class CpParameterSet(CpParameterSetCreate):
             orm_mode = True
 
 
-class CpInfoCreate(BaseModel):
+class CpInfoCreate(ExtraBaseModel):
     """Represents the configuration of a chargeable party."""    
     # supportedFeatures: SupportedFeatures
     mtcProviderId: str = Field(None, description="Identifies the MTC Service Provider and/or MTC Application.")

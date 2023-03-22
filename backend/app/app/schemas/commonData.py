@@ -1,6 +1,6 @@
 from typing import Optional, List
 from datetime import datetime
-from pydantic import BaseModel, Field, IPvAnyAddress, AnyHttpUrl, constr
+from pydantic import BaseModel, Field, IPvAnyAddress, AnyHttpUrl, constr, Extra
 from enum import Enum
 
 
@@ -32,6 +32,12 @@ from enum import Enum
 #LocationArea
 #LocationArea5G
 #ConfigResult
+
+#own
+class ExtraBaseModel(BaseModel):
+    
+    class Config:
+        extra = Extra.forbid
 
 
 class Snssai(BaseModel):

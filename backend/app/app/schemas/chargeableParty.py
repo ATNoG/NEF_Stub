@@ -2,23 +2,24 @@ from typing import Optional, List
 from datetime import datetime
 from pydantic import BaseModel, Field, IPvAnyAddress, AnyHttpUrl, constr
 from enum import Enum
+from .commonData  import ExtraBaseModel
 
-class Snssai(BaseModel):
+class Snssai(ExtraBaseModel):
     sst: int = Field(default=1, description="Unsigned integer representing the Slice/Service Type. Value 0 to 127 correspond to the standardized SST range. Value 128 to 255 correspond to the Operator-specific range.", ge=0, le=255)
     sd: Optional[constr(regex=r'^[0-9a-fA-F]{6}$')] = Field(default='000001', description="This value respresents the Slice Differentiator, in hexadecimal representation.")
 
-class FlowInfo(BaseModel):
+class FlowInfo(ExtraBaseModel):
     pass
 
-class Dnai(BaseModel):
+class Dnai(ExtraBaseModel):
     pass
 
-class EthFlowDescription(BaseModel):
+class EthFlowDescription(ExtraBaseModel):
     pass
 
 
 #TODO: see required
-class ChargeablePartyCreate(BaseModel):
+class ChargeablePartyCreate(ExtraBaseModel):
     """Represents the configuration of a chargeable party."""    
     # supportedFeatures: SupportedFeatures
     dnn: Optional[str] = Field("province1.mnc01.mcc202.gprs", description="String identifying the Data Network Name (i.e., Access Point Name in 4G). For more information check clause 9A of 3GPP TS 23.003")
@@ -51,5 +52,5 @@ class ChargeableParty(ChargeablePartyCreate):
             orm_mode = True
 
 
-class ChargeablePartyPatch(BaseModel):
+class ChargeablePartyPatch(ExtraBaseModel):
     pass

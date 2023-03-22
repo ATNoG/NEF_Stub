@@ -2,16 +2,16 @@ from typing import Optional
 from datetime import datetime
 from pydantic import BaseModel, Field, IPvAnyAddress, AnyHttpUrl, constr
 from enum import Enum
-from .commonData import Snssai
+from .commonData import Snssai, ExtraBaseModel
 
-class ConfigurationNotification(BaseModel):
+class ConfigurationNotification(ExtraBaseModel):
     """Represents a configuration result notification. """
     configuration: Optional[AnyHttpUrl] = Field("https://myresource.com", description="String identifying a referenced resource.")
     # configResults: List[ConfigResult] = Field(None, description="The grouping configuration result notification provided by the SCEF. ", min_items=1)
     #TODO: checkar este parametro do MonitoringEvent 29.122
     # appliedParam: AppliedParameterConfiguration
 
-class NpConfigurationCreate(BaseModel):
+class NpConfigurationCreate(ExtraBaseModel):
     # supportedFeatures: SupportedFeatures
     # mtcProviderId: Optional[str] = Field(None, description="Identifies the MTC Service Provider and/or MTC Application")
     dnn: Optional[str] = Field("province1.mnc01.mcc202.gprs", description="String identifying the Data Network Name (i.e., Access Point Name in 4G). For more information check clause 9A of 3GPP TS 23.003")

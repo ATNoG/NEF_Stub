@@ -2,13 +2,14 @@ from typing import List, Optional
 from datetime import datetime
 from pydantic import BaseModel, Field, IPvAnyAddress, AnyHttpUrl
 from enum import Enum
+from .commonData import ExtraBaseModel
 
 class CongestionType(str, Enum):
     high = "HIGH"
     medium = "MEDIUM"
     low = "LOW"
 
-class NetworkStatusReportingSubscriptionCreate(BaseModel):
+class NetworkStatusReportingSubscriptionCreate(ExtraBaseModel):
     """Represents a subscription to network status information reporting."""
     # supportedFeatures: Optional[SupportedFeatures]
     #TODO: utils
@@ -27,7 +28,7 @@ class NetworkStatusReportingSubscription(NetworkStatusReportingSubscriptionCreat
     class Config:
             orm_mode = True
 
-class NetworkStatusReportingNotification(BaseModel):
+class NetworkStatusReportingNotification(ExtraBaseModel):
     """Represents a network status reporting notification."""
     subscription: AnyHttpUrl
     nsiValue: Optional[int] = Field(None, description= "Network Status Indicator based on exact value for congestion status received from RCAF(s).", ge=0, le=31)

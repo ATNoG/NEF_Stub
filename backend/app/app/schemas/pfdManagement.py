@@ -2,6 +2,7 @@ from typing import Optional, List
 from datetime import datetime
 from pydantic import BaseModel, Field, IPvAnyAddress, AnyHttpUrl, constr
 from enum import Enum
+from .commonData import ExtraBaseModel
 
 #TODO: check openAPI $ref meaning
 
@@ -19,14 +20,14 @@ class DomainNameProtocol(str, Enum):
     tlsSAN = "TLS_SAN"
     tlsSCN = "TSL_SCN"
 
-class UserPlaneLocationArea(BaseModel):
+class UserPlaneLocationArea(ExtraBaseModel):
     """Represents location area(s) of the user plane functions which are unable to 
 enforce the provisioned PFD(s) successfully."""
     # locationArea: LocationArea
     # locationArea5G: LocationArea5G
     # dnais: List[Dnai] =Field(None, description="Identifies a list of DNAI which the user plane functions support.", min_items=0)
 
-class PfdReport(BaseModel):
+class PfdReport(ExtraBaseModel):
     """Represents a PFD report indicating the external application identifier(s) which 
 PFD(s) are not added or modified successfully and the corresponding failure cause(s)."""
     externalAppIds: List[str] = Field("", description="Identifies the external application identifier(s) which PFD(s) are not added or modified successfully.", min_items=1)
@@ -37,7 +38,7 @@ PFD(s) are not added or modified successfully and the corresponding failure caus
 
 
 
-class Pfd(BaseModel):
+class Pfd(ExtraBaseModel):
     """Represents a PFD for an external Application Identifier.""" 
     pfdId: str
     flowDescriptions: List[str] = Field("", description="Represents a 3-tuple with protocol, server ip and server port for UL/DL application traffic. The content of the string has the same encoding as the IPFilterRule AVP value as defined in IETF RFC 6733.", min_items=1)
@@ -45,7 +46,7 @@ class Pfd(BaseModel):
     domainNames: List[str] = Field("", description="Indicates an FQDN or a regular expression as a domain name matching criteria.", min_items=1)
     # dnProtocol: DomainNameProtocol
 
-class PfdData(BaseModel):
+class PfdData(ExtraBaseModel):
     """Represents a PFD request to add, update or remove PFD(s) for one external 
 application identifier.""" 
     externalAppId: Optional[str] = Field("123456789@domain.com", description="Globally unique identifier containing a Domain Identifier and a Local Identifier. \<Local Identifier\>@\<Domain Identifier\>")
@@ -55,7 +56,7 @@ application identifier."""
     # allowedDelay: DurationSecRm
     # cachingTime: DurationSecRo
 
-class PfdManagementCreate(BaseModel):
+class PfdManagementCreate(ExtraBaseModel):
     """Represents the configuration of a chargeable party."""    
     # supportedFeatures: SupportedFeatures
     #TODO: map instead of list
